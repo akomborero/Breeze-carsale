@@ -15,7 +15,7 @@ export default function Features() {
               The <span className="text-[#632197]">Rare</span> Edit.
             </h2>
             <p className="text-gray-500 font-medium leading-relaxed max-w-[280px]">
-              Access our vault of low-mileage, high-spec luxury vehicles that you won't find on public marketplaces.
+              Access our vault of low-mileage, high-spec luxury vehicles that you will not  find on public marketplaces.
             </p>
           </div>
 
@@ -39,7 +39,7 @@ export default function Features() {
               Effortless <span className="text-[#632197]">Selling.</span>
             </h2>
             <p className="text-white/50 font-medium leading-relaxed max-w-[300px]">
-              Don't deal with low-ballers. We offer premium valuations and instant wire transfers for your luxury vehicle.
+              Do not deal with low-ballers. We offer premium valuations and instant wire transfers for your luxury vehicle.
             </p>
           </div>
           

@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import AuthModal from './AuthModal';
+import { useAuth } from './AuthProvider';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const navLinks = [
     { name: "Cars for Sale", href: "/cars" },
@@ -34,20 +36,45 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            {user?.isAdmin && (
+              <>
+                <Link 
+                  href="/admin" 
+                  className="text-[#632197] hover:text-[#4d1975] transition-colors underline-offset-4 hover:underline"
+                >
+                  Admin Panel
+                </Link>
+                <Link href="/admin" className="px-4 py-2 bg-black text-white text-xs font-bold rounded-full hover:bg-[#333] transition-all">
+                  + Add Car
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
         {/* Right Side: Actions */}
         <div className="flex items-center gap-5">
-          <button 
-            onClick={() => setIsAuthModalOpen(true)}
-            className="hidden sm:flex items-center gap-2 text-[14px] font-bold text-[#333333] hover:text-[#632197]"
-          >
-            <span>Sign In</span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.963-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </button>
+          {user ? (
+            <div className="hidden sm:flex items-center gap-4">
+              <span className="text-xs font-bold text-gray-500">Hi, {user.email.split('@')[0]}</span>
+              <button 
+                onClick={logout}
+                className="text-[14px] font-bold text-red-500 hover:text-red-700 transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsAuthModalOpen(true)}
+              className="hidden sm:flex items-center gap-2 text-[14px] font-bold text-[#333333] hover:text-[#632197]"
+            >
+              <span>Sign In</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.963-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+          )}
           
           {/* Mobile Menu Toggle */}
           <button 
@@ -86,13 +113,31 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          {user?.isAdmin && (
+            <Link 
+              href="/admin" 
+              onClick={() => setIsOpen(false)}
+              className="text-3xl font-black text-[#632197] italic hover:underline"
+            >
+              Admin Panel
+            </Link>
+          )}
           <hr className="w-full border-gray-100" />
-          <button 
-            onClick={() => { setIsOpen(false); setIsAuthModalOpen(true); }}
-            className="w-full py-5 bg-[#632197] text-white font-black rounded-2xl italic uppercase tracking-widest shadow-xl"
-          >
-            Sign In
-          </button>
+          {user ? (
+            <button 
+              onClick={() => { setIsOpen(false); logout(); }}
+              className="w-full py-5 bg-gray-100 text-black font-black rounded-2xl italic uppercase tracking-widest shadow-sm"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <button 
+              onClick={() => { setIsOpen(false); setIsAuthModalOpen(true); }}
+              className="w-full py-5 bg-[#632197] text-white font-black rounded-2xl italic uppercase tracking-widest shadow-xl"
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </div>
 

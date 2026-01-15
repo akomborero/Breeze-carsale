@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { useAuth } from './AuthProvider';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -9,6 +10,14 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+
+  const handleSubmit = () => {
+    login(email, true);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -40,7 +49,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           {!isLogin && (
             <div className="animate-in slide-in-from-top-2 duration-300">
               <input 
@@ -54,16 +63,20 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           <input 
             type="email" 
             placeholder="Email Address" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-4 bg-gray-50 border border-gray-300 rounded-2xl font-bold text-gray-900 placeholder:text-gray-500 outline-none focus:border-[#632197] focus:bg-white transition-all shadow-sm" 
           />
           
           <input 
             type="password" 
             placeholder="Password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-4 bg-gray-50 border border-gray-300 rounded-2xl font-bold text-gray-900 placeholder:text-gray-500 outline-none focus:border-[#632197] focus:bg-white transition-all shadow-sm" 
           />
           
-          <button className="w-full bg-[#632197] text-white py-4 mt-2 rounded-2xl font-black uppercase tracking-widest hover:bg-[#4d1975] transition-all shadow-lg active:scale-[0.98]">
+          <button type="submit" className="w-full bg-[#632197] text-white py-4 mt-2 rounded-2xl font-black uppercase tracking-widest hover:bg-[#4d1975] transition-all shadow-lg active:scale-[0.98]">
             {isLogin ? "Sign In" : "Create Account"}
           </button>
         </form>
