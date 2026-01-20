@@ -47,7 +47,7 @@ export default function CarDetails({ carId }: CarDetailsProps) {
   const handleWhatsAppDirect = () => {
     if (!car) return;
 
-    const myNumber = "263770000000"; // Replace with your number
+    const myNumber = "263781146463"; // Replace with your number
     const message = `Hi! I&apos;m interested in booking the ${car.year} ${car.make} ${car.model}. Could you provide more details?`;
     
     // Deep link protocol to open the app directly
