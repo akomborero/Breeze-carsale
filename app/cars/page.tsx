@@ -21,9 +21,8 @@ export default function CarsPage() {
               <div>
                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-2">Price</label>
                 <select className="w-full p-3 bg-gray-50 rounded-xl font-bold border-none outline-none">
-                  <option>All Prices</option>
-                  <option>Under $30k</option>
-                  <option>$30k - $60k</option>
+                  <option>All Cars</option>
+                  
                 </select>
               </div>
               <button className="w-full py-3 bg-[#632197] text-white rounded-xl font-bold text-sm">

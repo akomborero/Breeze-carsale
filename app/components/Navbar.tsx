@@ -42,11 +42,9 @@ export default function Navbar() {
                   href="/admin" 
                   className="text-[#632197] hover:text-[#4d1975] transition-colors underline-offset-4 hover:underline"
                 >
-                  Admin Panel
+                  Manage Inventory
                 </Link>
-                <Link href="/admin" className="px-4 py-2 bg-black text-white text-xs font-bold rounded-full hover:bg-[#333] transition-all">
-                  + Add Car
-                </Link>
+               
               </>
             )}
           </div>
@@ -103,6 +101,22 @@ export default function Navbar() {
         ${isOpen ? 'translate-y-0' : '-translate-y-full'}
       `}>
         <div className="flex flex-col items-center justify-center h-full gap-8 px-6">
+          
+          {/* NEW HOME BUTTON FOR MOBILE */}
+          <Link 
+            href="/" 
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-2 text-4xl font-black text-[#632197] italic hover:scale-105 transition-transform"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+              <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+              <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+            </svg>
+            HOME
+          </Link>
+
+          <hr className="w-20 border-t-4 border-gray-100 rounded-full" />
+
           {navLinks.map((link) => (
             <Link 
               key={link.name} 

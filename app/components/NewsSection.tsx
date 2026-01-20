@@ -104,9 +104,9 @@ export default async function NewsSection() {
                 </a>
               ))}
             </div>
-            <button className="w-full mt-10 py-4 border-2 border-gray-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-all">
-              See all news
-            </button>
+          <button className="w-full mt-10 py-5 border-[3px] border-black rounded-2xl font-black text-sm uppercase tracking-[0.2em] text-black hover:bg-black hover:text-white hover:shadow-2xl transition-all duration-300 active:scale-[0.98]">
+  See all news
+</button>
           </div>
 
         </div>

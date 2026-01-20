@@ -5,27 +5,19 @@ import { useAuth } from './AuthProvider';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialMode?: 'login' | 'signup';
 }
 
-export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalProps) {
-  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login, signup } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      if (isLogin) {
-        await login(email, password);
-      } else {
-        await signup(email, password, fullName);
-        alert("Success! If email confirmation is off, you are now logged in.");
-      }
+      await login(email, password);
       onClose();
     } catch (error) {
       alert((error as Error).message);
@@ -42,7 +34,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
       
       {/* Modal Card */}
-      <div className="relative bg-white w-full max-w-[440px] rounded-[40px] p-10 shadow-2xl border border-gray-100">
+      <div className="relative bg-white w-full max-w-[440px] rounded-[40px] p-10 shadow-2xl border border-gray-100 animate-in zoom-in duration-300">
         <button onClick={onClose} className="absolute top-6 right-8 text-gray-400 hover:text-black">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -51,60 +43,47 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
         
         <div className="text-center mb-8">
           <h2 className="text-3xl font-black text-gray-900 italic uppercase tracking-tighter">
-            {isLogin ? "Welcome Back" : "Join the Club"}
+            Admin Login
           </h2>
+          <p className="text-gray-500 font-bold text-sm mt-2">Breezecars Management Portal</p>
         </div>
 
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
-          {!isLogin && (
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Email</label>
             <input 
-              type="text" 
-              placeholder="Full Name" 
+              type="email" 
+              placeholder="admin@breezecars.com" 
               required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full p-4 bg-gray-50 border border-gray-300 rounded-2xl font-bold text-black placeholder:text-gray-500 outline-none focus:border-[#632197] transition-all" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-black placeholder:text-gray-400 outline-none focus:border-[#632197] focus:bg-white transition-all" 
             />
-          )}
+          </div>
           
-          <input 
-            type="email" 
-            placeholder="Email Address" 
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-4 bg-gray-50 border border-gray-300 rounded-2xl font-bold text-black placeholder:text-gray-500 outline-none focus:border-[#632197] transition-all" 
-          />
-          
-          <input 
-            type="password" 
-            placeholder="Password" 
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-4 bg-gray-50 border border-gray-300 rounded-2xl font-bold text-black placeholder:text-gray-500 outline-none focus:border-[#632197] transition-all" 
-          />
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Password</label>
+            <input 
+              type="password" 
+              placeholder="••••••••" 
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-black placeholder:text-gray-400 outline-none focus:border-[#632197] focus:bg-white transition-all" 
+            />
+          </div>
           
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-[#632197] text-white py-4 mt-2 rounded-2xl font-black uppercase tracking-widest hover:bg-[#4d1975] transition-all disabled:bg-gray-400"
+            className="w-full bg-[#632197] text-white py-5 mt-4 rounded-2xl font-black uppercase tracking-widest hover:bg-[#4d1975] shadow-lg shadow-purple-200 transition-all disabled:bg-gray-400 active:scale-95"
           >
-            {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
+            {loading ? "Verifying..." : "Sign In"}
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-          <p className="text-gray-600 font-bold">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
-            <button 
-              type="button"
-              onClick={() => setIsLogin(!isLogin)} 
-              className="ml-2 text-[#632197] hover:underline"
-            >
-              {isLogin ? "Sign Up" : "Log In"}
-            </button>
-          </p>
+        <div className="mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-400 font-bold uppercase tracking-widest">
+          Authorized Personnel Only
         </div>
       </div>
     </div>

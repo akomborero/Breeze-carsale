@@ -53,9 +53,9 @@ export default function Hero() {
                   <label className="text-[9px] font-bold text-gray-400 uppercase ml-1">Category</label>
                   <select className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl font-bold text-sm text-gray-700 outline-none focus:border-[#632197] transition-all cursor-pointer">
                     <option>All Categories</option>
-                    <option>SUV & Crossover</option>
-                    <option>Sedan</option>
-                    <option>Sports & Coupe</option>
+                    <option>Auto</option>
+                    <option>Manual</option>
+                    <option>Pre-onwed</option>
                   </select>
                 </div>
               </div>

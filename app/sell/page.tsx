@@ -9,7 +9,9 @@ export default function SellPage() {
       {/* Optional: Add a 'Frequently Asked Questions' section here to match Cars.com */}
       <section className="bg-gray-50 py-20 px-6 border-t border-gray-100">
         <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold mb-10 text-center">Frequently asked questions</h2>
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-12 text-center italic uppercase tracking-tighter">
+  Frequently <span className="text-[#632197]">asked</span> questions
+</h2>
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm">
               <h4 className="font-bold text-gray-900">How long is my offer valid?</h4>

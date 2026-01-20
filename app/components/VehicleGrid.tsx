@@ -69,12 +69,15 @@ export default function VehicleGrid() {
           <div className="flex items-center gap-4">
             {user?.isAdmin && (
               <Link href="/admin" className="px-4 py-2 bg-[#632197] text-white text-xs font-bold rounded-lg hover:bg-[#4d1975] transition-all shadow-lg">
-                + ADMIN PANEL
+                + ADD A CAR
               </Link>
             )}
-            <Link href="/cars" className="text-sm font-bold border-b-2 border-black hover:text-[#632197] hover:border-[#632197] transition-all">
-              VIEW ALL
-            </Link>
+            <Link 
+  href="/cars" 
+  className="inline-block px-8 py-3 border-2 border-black text-black text-xs font-black uppercase tracking-[0.2em] rounded-full hover:bg-black hover:text-white transition-all duration-300 active:scale-95"
+>
+  View All Cars
+</Link>
           </div>
         </div>
 
@@ -119,7 +122,7 @@ export default function VehicleGrid() {
                   </h4>
                   <p className="text-[#632197] font-black text-sm mt-0.5">
                     {car.price}
-                    <span className="text-[10px] text-gray-400 font-medium lowercase"> /day</span>
+                    
                   </p>
                   <span className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-black transition-colors">
                     View Details →
