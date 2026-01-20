@@ -56,9 +56,7 @@ export default function Features() {
           <div className="absolute right-[-10px] bottom-[-10px] opacity-20 group-hover:opacity-40 transition-all duration-700">
              <div className="w-64 h-64 bg-gradient-to-br from-[#632197] to-transparent rounded-full blur-[80px]" />
           </div>
-          <div className="absolute right-8 bottom-8 text-[140px] z-10 drop-shadow-2xl">
-            🤝
-          </div>
+          
         </div>
 
       </div>
