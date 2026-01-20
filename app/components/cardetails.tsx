@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { supabase } from '../../server/supabaseClient';
+import VehicleGrid from './VehicleGrid';
 
 interface CarDetailsProps {
   carId: string;
@@ -135,6 +136,10 @@ export default function CarDetails({ carId }: CarDetailsProps) {
           </div>
         </div>
 
+      </div>
+
+      <div className="mt-20">
+        <VehicleGrid />
       </div>
     </div>
   );
