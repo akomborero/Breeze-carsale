@@ -16,7 +16,7 @@ interface SupabaseCarResponse {
   make: string;
   model: string;
   year: number;
-  price_per_day: number;
+  price: number;
   images: string[];
   reviews: ReviewData[];
 }
@@ -59,7 +59,7 @@ export default function VehicleGrid({ limit }: VehicleGridProps) {
 
       const { data, error, count } = await supabase
         .from('cars')
-        .select('id, make, model, year, price_per_day, images, reviews(rating)', { count: 'exact' })
+        .select('id, make, model, year, price, images, reviews(rating)', { count: 'exact' })
         .order('created_at', { ascending: false })
         .range(0, visibleCount - 1);
 
@@ -79,7 +79,7 @@ export default function VehicleGrid({ limit }: VehicleGridProps) {
           return {
             id: c.id,
             name: `${c.make} ${c.model}`,
-            price: `$${c.price_per_day.toLocaleString()}`,
+            price: `$${c.price.toLocaleString()}`,
             year: c.year.toString(),
             imgs: c.images || [],
             avgRating: avg

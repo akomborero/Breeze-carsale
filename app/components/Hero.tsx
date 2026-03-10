@@ -9,7 +9,7 @@ interface Car {
   make: string;
   model: string;
   year: number;
-  price_per_day: number;
+  price: number;
   images: string[];
 }
 
@@ -22,7 +22,7 @@ export default function Hero() {
     async function fetchCars() {
       const { data } = await supabase
         .from('cars')
-        .select('id, make, model, year, price_per_day, images')
+        .select('id, make, model, year, price, images')
         .limit(5)
         .order('created_at', { ascending: false });
       
@@ -160,7 +160,7 @@ if (cars.length === 0) {
             {car.make} <span className="text-gray-500">{car.model}</span>
           </h1>
           <p className="text-xl md:text-2xl font-bold text-gray-400 mb-8 uppercase tracking-widest">
-            {car.year} Edition &bull; ${car.price_per_day.toLocaleString()}
+            {car.year} Edition &bull; ${car.price.toLocaleString()}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
