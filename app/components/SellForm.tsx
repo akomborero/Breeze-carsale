@@ -32,30 +32,31 @@ export default function SellForm() {
     }
   };
 
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     const myNumber = "263771716547"; 
     
-    const message = `*NEW CAR SUBMISSION*
+    const message = `NEW CAR SUBMISSION
 
-*Vehicle:* ${formData.vehicleInfo}
-*Price:* $${formData.price} USD
-*Location:* ${formData.location}
-*Duty:* ${formData.dutyStatus}
-*Mileage:* ${formData.mileage}km
-*Fuel:* ${formData.fuelType}
-*Trans:* ${formData.transmission}
+Vehicle: ${formData.vehicleInfo}
+Price: $${formData.price} USD
+Location: ${formData.location}
+Duty: ${formData.dutyStatus}
+Mileage: ${formData.mileage}km
+Fuel: ${formData.fuelType}
+Trans: ${formData.transmission}
 
-*CONTACT*
-*Name:* ${formData.fullName}
-*Phone:* ${formData.phone}
-*Photos:* ${images.length} attached`;
+CONTACT
+Name: ${formData.fullName}
+Phone: ${formData.phone}
+Photos: ${images.length} attached (Sending photos now...)`;
 
-    // Direct deep link
     const whatsappUrl = `whatsapp://send?phone=${myNumber}&text=${encodeURIComponent(message)}`;
-    
-    // Open immediately
     window.location.href = whatsappUrl;
   };
 
@@ -95,8 +96,6 @@ export default function SellForm() {
       <h2 className="text-4xl font-black text-gray-900 mb-10 italic uppercase tracking-tighter">Vehicle Submission</h2>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        
-        {/* Section 1 */}
         <div className="bg-gray-50 p-8 rounded-[32px] border border-gray-100">
           <h3 className="text-sm font-black mb-6 text-black uppercase tracking-[0.2em]">1. Vehicle Info</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -110,7 +109,6 @@ export default function SellForm() {
           </div>
         </div>
 
-        {/* Section 2 */}
         <div className="bg-gray-50 p-8 rounded-[32px] border border-gray-100">
           <h3 className="text-sm font-black mb-6 text-black uppercase tracking-[0.2em]">2. Specifications</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -129,10 +127,32 @@ export default function SellForm() {
           </div>
         </div>
 
-        {/* Section 3: Photo Upload */}
         <div className="bg-gray-50 p-8 rounded-[32px] border border-gray-100">
           <h3 className="text-sm font-black mb-6 text-black uppercase tracking-[0.2em]">3. Photos</h3>
-          <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center hover:border-black transition-colors">
+          
+          {/* Image Preview Grid */}
+          {images.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mb-6">
+              {images.map((file, index) => (
+                <div key={index} className="relative aspect-square rounded-xl overflow-hidden group shadow-md border border-gray-200">
+                  <img 
+                    src={URL.createObjectURL(file)} 
+                    alt="preview" 
+                    className="w-full h-full object-cover"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-1 right-1 bg-black text-white w-6 h-6 rounded-full text-[10px] flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center hover:border-black transition-colors bg-white">
             <input 
               type="file" 
               multiple 
@@ -142,13 +162,12 @@ export default function SellForm() {
             />
             <div className="space-y-2">
               <div className="text-4xl text-gray-400">📸</div>
-              <p className="text-gray-900 font-bold">Click or drag photos to upload</p>
+              <p className="text-gray-900 font-bold">Add more photos</p>
               <p className="text-sm text-gray-500">{images.length} files selected</p>
             </div>
           </div>
         </div>
 
-        {/* Section 4 */}
         <div className="bg-gray-50 p-8 rounded-[32px] border border-gray-100">
           <h3 className="text-sm font-black mb-6 text-black uppercase tracking-[0.2em]">4. Contact Info</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -157,9 +176,18 @@ export default function SellForm() {
           </div>
         </div>
 
-        <button type="submit" className="w-full py-6 bg-black text-white font-black rounded-3xl uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all active:scale-95">
-            SUBMIT TO WHATSAPP
-        </button>
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
+            <div className="text-blue-600 text-lg">ℹ️</div>
+            <p className="text-xs text-blue-800 font-bold leading-relaxed uppercase tracking-wider">
+              Note: WhatsApp does not allow auto-uploading of photos. Please attach the {images.length} selected photos manually once the chat opens.
+            </p>
+          </div>
+
+          <button type="submit" className="w-full py-6 bg-black text-white font-black rounded-3xl uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all active:scale-95">
+              SUBMIT TO WHATSAPP
+          </button>
+        </div>
       </form>
     </div>
   );
