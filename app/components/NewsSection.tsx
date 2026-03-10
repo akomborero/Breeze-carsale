@@ -16,7 +16,7 @@ async function getNews() {
   try {
     const res = await fetch(
       `https://newsapi.org/v2/everything?q=automotive&language=en&sortBy=publishedAt&pageSize=15&apiKey=${apiKey}`,
-      { next: { revalidate: 1800 } }
+      { next: { revalidate: 5 } }
     );
     if (!res.ok) return [];
     const data = await res.json();

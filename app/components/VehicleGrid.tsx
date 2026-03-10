@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from './AuthProvider';
 import { supabase } from '../../server/supabaseClient';
+import StatusModal from './StatusModal';
 
 // 1. Defined strict types to avoid 'any'
 interface ReviewData {
@@ -29,24 +30,41 @@ type Car = {
   avgRating: string | null;
 };
 
-export default function VehicleGrid() {
+interface VehicleGridProps {
+  limit?: number;
+}
+
+export default function VehicleGrid({ limit }: VehicleGridProps) {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const [visibleCount, setVisibleCount] = useState(limit || 8);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [status, setStatus] = useState<{ isOpen: boolean; title: string; message: string; type: 'success' | 'error' }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'success'
+  });
 
   useEffect(() => {
     fetchLiveStock();
-  }, []);
+  }, [visibleCount]);
 
   async function fetchLiveStock() {
     try {
-      setLoading(true);
-      const { data, error } = await supabase
+      if (cars.length === 0) setLoading(true);
+      else setLoadingMore(true);
+
+      const { data, error, count } = await supabase
         .from('cars')
-        .select('id, make, model, year, price_per_day, images, reviews(rating)')
-        .order('created_at', { ascending: false });
+        .select('id, make, model, year, price_per_day, images, reviews(rating)', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(0, visibleCount - 1);
 
       if (error) throw error;
+      if (count !== null) setTotalCount(count);
 
       if (data) {
         // 2. Cast to our response interface instead of 'any'
@@ -71,8 +89,15 @@ export default function VehicleGrid() {
       }
     } catch (err) {
       console.error("Error fetching cars:", err);
+      setStatus({
+        isOpen: true,
+        title: 'Connection Error',
+        message: 'Could not fetch vehicle inventory. Please check your connection.',
+        type: 'error'
+      });
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   }
 
@@ -106,7 +131,7 @@ export default function VehicleGrid() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="animate-pulse">
                 {/* 4. Canonical aspect ratio class */}
@@ -117,7 +142,7 @@ export default function VehicleGrid() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {cars.map((car) => (
               <Link 
                 key={car.id} 
@@ -170,7 +195,27 @@ export default function VehicleGrid() {
              <p className="text-gray-500 font-bold">Our showroom is currently empty. Check back soon!</p>
           </div>
         )}
+
+        {cars.length < totalCount && (
+          <div className="mt-16 text-center">
+            <button 
+              onClick={() => setVisibleCount(prev => prev + 4)}
+              disabled={loadingMore}
+              className="inline-block px-12 py-5 bg-black text-white text-xs font-black uppercase tracking-[0.2em] rounded-full hover:bg-gray-800 hover:shadow-xl transition-all duration-300 active:scale-95 shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {loadingMore ? 'Loading...' : 'Load More Cars'}
+            </button>
+          </div>
+        )}
       </div>
+
+      <StatusModal 
+        isOpen={status.isOpen}
+        onClose={() => setStatus(prev => ({ ...prev, isOpen: false }))}
+        title={status.title}
+        message={status.message}
+        type={status.type}
+      />
     </section>
   );
 }

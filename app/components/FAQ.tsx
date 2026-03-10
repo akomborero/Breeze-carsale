@@ -4,7 +4,7 @@ import { useState } from 'react';
 const faqData = [
   {
     question: "How do I know I'm getting a fair price for my car?",
-    answer: "At Breezecars, we use real-time market data to compare thousands of similar listings. Our 'Deal Rating' system helps you see exactly how a car's price compares to the local market average."
+    answer: " we use real-time market data to compare thousands of similar listings. Our 'Deal Rating' system helps you see exactly how a car's price compares to the local market average."
   },
   {
     question: "Can I buy a car entirely online?",

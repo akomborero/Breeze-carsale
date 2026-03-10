@@ -22,7 +22,7 @@ export default function Navbar() {
         {/* Left Side: Logo */}
         <div className="flex items-center gap-10">
           <Link href="/" className="text-[28px] font-black  text-black italic tracking-tighter">
-            Breezecars
+            Breeze
           </Link>
 
           {/* Navigation Links - Desktop */}
@@ -54,7 +54,7 @@ export default function Navbar() {
         <div className="flex items-center gap-5">
           {user ? (
             <div className="hidden sm:flex items-center gap-4">
-              <span className="text-xs font-bold text-gray-500">Hi, {user.email.split('@')[0]}</span>
+              <span className="text-xs font-bold text-gray-500"> {user.email.split('@')[0]}</span>
               <button 
                 onClick={logout}
                 className="text-[14px] font-bold text-gray-500 hover:text-black transition-colors"

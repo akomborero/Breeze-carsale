@@ -1,270 +1,141 @@
 "use client";
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { supabase } from '../../server/supabaseClient';
-import VehicleGrid from './VehicleGrid';
-import { useAuth } from './AuthProvider'; // Ensure this path matches your project
 
-interface CarDetailsProps {
-  carId: string;
-}
-
-interface CarData {
+interface Car {
   id: string;
   make: string;
   model: string;
   year: number;
   price_per_day: number;
   images: string[];
-  description: string;
-  fuel_type: string;
-  transmission: string;
-  mileage: string;
 }
 
-interface Review {
-  id: string;
-  user_name: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
-
-export default function CarDetails({ carId }: CarDetailsProps) {
-  const { user } = useAuth();
-  const [car, setCar] = useState<CarData | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
+export default function Hero() {
+  const [cars, setCars] = useState<Car[]>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [activeImage, setActiveImage] = useState(0);
-  const reviewsRef = useRef<HTMLDivElement>(null);
-
-  // Form State
-  const [reviewName, setReviewName] = useState('');
-  const [reviewEmail, setReviewEmail] = useState('');
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((acc, item) => acc + item.rating, 0) / reviews.length).toFixed(1)
-    : null;
-
-  const fetchCarAndReviews = useCallback(async () => {
-    try {
-      const { data: carData } = await supabase.from('cars').select('*').eq('id', carId).single();
-      const { data: reviewData } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('car_id', carId)
-        .order('created_at', { ascending: false });
-
-      if (carData) setCar(carData);
-      if (reviewData) setReviews(reviewData);
-    } catch (err) {
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [carId]);
 
   useEffect(() => {
-    fetchCarAndReviews();
-  }, [fetchCarAndReviews]);
-
-  const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from('reviews').insert([{
-        car_id: carId,
-        user_name: reviewName,
-        user_email: reviewEmail,
-        rating: reviewRating,
-        comment: reviewComment,
-    }]);
-
-    if (error) {
-      alert(error.message);
-    } else {
-      setReviewName(''); setReviewEmail(''); setReviewComment('');
-      fetchCarAndReviews();
-    }
-    setSubmitting(false);
-  };
-
-  const handleDeleteReview = async (reviewId: string) => {
-    if (window.confirm('Are you sure you want to delete this customer review?')) {
-      const { error } = await supabase
-        .from('reviews')
-        .delete()
-        .eq('id', reviewId);
-
-      if (error) {
-        alert(error.message);
-      } else {
-        setReviews(prev => prev.filter(r => r.id !== reviewId));
+    async function fetchCars() {
+      const { data } = await supabase
+        .from('cars')
+        .select('id, make, model, year, price_per_day, images')
+        .limit(5)
+        .order('created_at', { ascending: false });
+      
+      if (data) {
+        setCars(data);
       }
+      setLoading(false);
     }
-  };
+    fetchCars();
+  }, []);
 
-  const scrollToReviews = () => {
-    reviewsRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  useEffect(() => {
+    if (cars.length === 0) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % cars.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [cars.length]);
 
-  const handleWhatsAppDirect = () => {
-    if (!car) return;
-    const myNumber = "263 771 716 547"; 
-    const message = `🚀 *New Inquiry: ${car.year} ${car.make} ${car.model}*%0A%0AHi Breezecars! I am interested in this vehicle...%0A%0A*Link:* ${window.location.href}`;
-    window.location.href = `whatsapp://send?phone=${myNumber}&text=${encodeURIComponent(message)}`;
-  };
+  if (loading) {
+    return <div className="h-dvh w-full bg-black flex items-center justify-center text-white font-bold uppercase italic">Loading Inventory...</div>;
+  }
+if (cars.length === 0) {
+  return (
+    <section className="relative h-dvh w-full bg-[#0a0a0a] overflow-hidden flex items-center px-6">
+      {/* Background Image */}
+      <Image 
+        src="https://static.vecteezy.com/system/resources/thumbnails/055/672/799/small/red-modern-red-sport-car-driving-fast-on-scenic-road-in-forest-at-sunset-automotive-background-tuning-template-auto-transport-photo.jpg"
+        alt="Background"
+        fill
+        priority
+        className="object-cover opacity-60" // Opacity makes the white text easier to read
+        unoptimized // Needed for external links like gstatic
+      />
+      
+      {/* Overlay to ensure text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10" />
 
-  if (loading) return <div className="p-20 text-center font-bold text-black uppercase italic">Loading...</div>;
-  if (!car) return <div className="p-20 text-center font-bold text-black uppercase italic">Car not found.</div>;
+      <div className="container mx-auto z-20">
+        <h1 className="text-5xl font-black text-white italic">
+         
+        </h1>
+      </div>
+    </section>
+  );
+}
+
+  const car = cars[currentSlide];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* LEFT: Image Gallery */}
-        <div className="space-y-4">
-          <div className="relative aspect-video rounded-[30px] overflow-hidden bg-gray-100 shadow-xl">
-            <Image src={car.images[activeImage]} alt={car.model} fill className="object-cover" unoptimized />
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {car.images.map((img, idx) => (
-              <button key={idx} onClick={() => setActiveImage(idx)} className={`relative w-24 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${activeImage === idx ? 'border-black' : 'border-transparent'}`}>
-                <Image src={img} alt="thumbnail" fill className="object-cover" unoptimized />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* RIGHT: Info */}
-        <div className="flex flex-col">
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-2">
-                <span className="text-black font-black uppercase tracking-widest text-sm">{car.year} Model</span>
-                {averageRating && (
-                    <button onClick={scrollToReviews} className="flex items-center gap-1 bg-yellow-400 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase hover:scale-105 transition-transform shadow-sm">
-                        ★ {averageRating} ({reviews.length})
-                    </button>
-                )}
-            </div>
-            <h1 className="text-5xl font-black text-black italic uppercase tracking-tighter leading-[0.9]">
-              {car.make} <span className="text-gray-400">{car.model}</span>
-            </h1>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
-              <p className="text-[10px] text-gray-500 font-bold uppercase">Mileage</p>
-              <p className="font-black text-black">{car.mileage}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
-              <p className="text-[10px] text-gray-500 font-bold uppercase">Transmission</p>
-              <p className="font-black text-black">{car.transmission}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center">
-              <p className="text-[10px] text-gray-500 font-bold uppercase">Fuel</p>
-              <p className="font-black text-black">{car.fuel_type}</p>
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h3 className="font-bold text-black mb-2 uppercase text-xs tracking-widest">Description</h3>
-            <p className="text-gray-700 leading-relaxed font-medium">{car.description}</p>
-          </div>
-
-          <div className="mt-auto pt-8 border-t border-gray-100">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-              <div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1 block">Price</span>
-                <div className="text-4xl font-black text-black italic">${car.price_per_day.toLocaleString()}</div>
-              </div>
-              <button onClick={handleWhatsAppDirect} className="px-10 py-5 bg-black text-white rounded-2xl font-black uppercase hover:bg-gray-800 transition-all shadow-xl w-full sm:w-auto active:scale-95">
-                Chat on WhatsApp
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr className="my-20 border-gray-100" />
-
-      {/* REVIEWS SECTION */}
-      <div ref={reviewsRef} className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-1">
-          <h2 className="text-3xl font-black italic uppercase mb-6 text-black border-l-4 border-black pl-4">
-            Leave a Review
-          </h2>
-          <form onSubmit={handleReviewSubmit} className="space-y-4 bg-gray-50 p-8 rounded-[30px] border-2 border-gray-200 shadow-sm">
-            <div>
-              <label className="text-[10px] font-black uppercase text-black ml-2 mb-1 block tracking-widest">Full Name</label>
-              <input required placeholder="Your Name" value={reviewName} onChange={(e) => setReviewName(e.target.value)} className="w-full p-4 rounded-2xl border-2 border-gray-300 bg-white text-black font-bold focus:border-black outline-none transition-all" />
-            </div>
-            <div>
-              <label className="text-[10px] font-black uppercase text-black ml-2 mb-1 block tracking-widest">Email Address</label>
-              <input required type="email" placeholder="Your Email" value={reviewEmail} onChange={(e) => setReviewEmail(e.target.value)} className="w-full p-4 rounded-2xl border-2 border-gray-300 bg-white text-black font-bold focus:border-black outline-none transition-all" />
-            </div>
-            <div>
-              <label className="text-[10px] font-black uppercase text-black ml-2 mb-1 block tracking-widest">Rating</label>
-              <select value={reviewRating} onChange={(e) => setReviewRating(Number(e.target.value))} className="w-full p-4 rounded-2xl border-2 border-gray-300 bg-white text-black font-black uppercase focus:border-black outline-none transition-all">
-                <option value="5">★★★★★ Excellent</option>
-                <option value="4">★★★★☆ Very Good</option>
-                <option value="3">★★★☆☆ Average</option>
-                <option value="2">★★☆☆☆ Poor</option>
-                <option value="1">★☆☆☆☆ Terrible</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-[10px] font-black uppercase text-black ml-2 mb-1 block tracking-widest">Comment</label>
-              <textarea required placeholder="Share your experience..." value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} className="w-full p-4 rounded-2xl border-2 border-gray-300 bg-white text-black font-bold h-32 focus:border-black outline-none transition-all" />
-            </div>
-            <button disabled={submitting} type="submit" className="w-full py-5 bg-black text-white rounded-2xl font-black uppercase tracking-widest hover:bg-gray-800 transition-all disabled:bg-gray-400 active:scale-95 shadow-lg">
-              {submitting ? "Posting..." : "Submit Review"}
-            </button>
-          </form>
-        </div>
-
-        <div className="lg:col-span-2">
-          <h2 className="text-3xl font-black italic uppercase mb-6 text-black border-l-4 border-black pl-4">
-            Customer Feedback
-          </h2>
-          {reviews.length === 0 ? (
-            <p className="text-gray-500 italic font-medium bg-gray-50 p-8 rounded-2xl border border-dashed border-gray-200">No reviews yet. Be the first to review this car!</p>
-          ) : (
-            <div className="space-y-6">
-              {reviews.map((r) => (
-                <div key={r.id} className="relative p-8 bg-white border border-gray-200 rounded-[30px] shadow-md transition-all group">
-                  
-                  {user?.isAdmin && (
-                    <button 
-                      onClick={() => handleDeleteReview(r.id)}
-                      className="absolute top-6 right-6 py-2 px-4 bg-red-50 text-red-600 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all text-[10px] uppercase tracking-widest shadow-sm"
-                    >
-                      Remove Review
-                    </button>
-                  )}
-
-                  <div className="flex justify-between items-start mb-4 pr-32">
-                    <h4 className="font-black text-xl uppercase italic text-black tracking-tight">{r.user_name}</h4>
-                    <div className="flex text-amber-500 text-lg drop-shadow-sm">
-                      {[...Array(r.rating)].map((_, i) => <span key={i}>★</span>)}
-                    </div>
-                  </div>
-                  <p className="text-gray-900 font-medium italic text-xl leading-relaxed">&quot;{r.comment}&quot;</p>
-                  <div className="flex items-center gap-2 mt-6">
-                     <div className="h-px w-8 bg-gray-300"></div>
-                     <p className="text-[11px] text-black uppercase font-black tracking-widest">{new Date(r.created_at).toLocaleDateString()}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+    <section className="relative h-dvh w-full bg-[#0a0a0a] overflow-hidden flex items-center px-6">
+      
+      {/* Carousel Images */}
+      {cars.map((item, index) => (
+        <div
+          key={item.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            index === currentSlide ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {item.images?.[0] && (
+            <Image 
+              src={item.images[0]} 
+              alt={`${item.make} ${item.model}`} 
+              fill
+              className="object-cover object-center opacity-50"
+              priority={index === 0}
+              unoptimized 
+            />
           )}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-transparent" />
+        </div>
+      ))}
+
+      <div className="container mx-auto z-20 relative">
+        <div className="max-w-[900px] animate-in fade-in slide-in-from-bottom-10 duration-700" key={car.id}>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-6 backdrop-blur-md border border-white/10">
+             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+             Just Arrived
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-black text-white italic tracking-tighter mb-2 leading-[0.9]">
+            {car.make} <span className="text-gray-500">{car.model}</span>
+          </h1>
+          <p className="text-xl md:text-2xl font-bold text-gray-400 mb-8 uppercase tracking-widest">
+            {car.year} Edition &bull; ${car.price_per_day.toLocaleString()}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+              <Link href={`/cars/${car.id}`} className="px-10 py-4 bg-white text-black rounded-full font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all shadow-xl">
+                View Details
+              </Link>
+              <Link href="/cars" className="px-10 py-4 border border-white/30 text-white rounded-full font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all backdrop-blur-sm">
+                Browse Inventory
+              </Link>
+          </div>
         </div>
       </div>
 
-      <div className="mt-20">
-        <VehicleGrid />
+      {/* Progress Indicators */}
+      <div className="absolute bottom-10 left-6 md:left-1/2 md:-translate-x-1/2 flex gap-2 z-30">
+        {cars.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentSlide(idx)}
+            className={`h-1 rounded-full transition-all duration-500 ${
+              idx === currentSlide ? 'w-12 bg-white' : 'w-3 bg-white/20 hover:bg-white/40'
+            }`}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
       </div>
-    </div>
+    </section>
   );
 }

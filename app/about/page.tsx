@@ -54,8 +54,8 @@ export default function AboutPage() {
           <div className="relative aspect-square">
              <div className="bg-white/10 rounded-[60px] absolute -right-20 -top-20 w-full h-full rotate-12 blur-3xl"></div>
              <Image 
-               src="https://i.pinimg.com/736x/14/01/24/1401243a39921e4f1f0363bf8f137542.jpg" 
-               alt="Breezecars Office"
+               src="https://static.vecteezy.com/system/resources/thumbnails/055/672/799/small/red-modern-red-sport-car-driving-fast-on-scenic-road-in-forest-at-sunset-automotive-background-tuning-template-auto-transport-photo.jpg" 
+               alt="Breezecars "
                fill
                className="rounded-[40px] relative z-10 shadow-2xl grayscale transition-all duration-700 object-cover"
                unoptimized

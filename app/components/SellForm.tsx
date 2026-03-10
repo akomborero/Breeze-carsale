@@ -75,7 +75,7 @@ export default function SellForm() {
             </button>
           </div>
           <div className="relative w-full h-[350px]">
-            <Image src="https://www.cars.com/images/sell-v3/instant-offer-illustration.png" alt="Sell car" fill className="object-contain" unoptimized />
+            <Image src="https://static.vecteezy.com/system/resources/thumbnails/055/672/799/small/red-modern-red-sport-car-driving-fast-on-scenic-road-in-forest-at-sunset-automotive-background-tuning-template-auto-transport-photo.jpg" alt="Sell car" fill className="object-contain" unoptimized />
           </div>
         </div>
       </div>
