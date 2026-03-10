@@ -35,7 +35,10 @@ export default function SellForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const myNumber = "+263771716547"; // Corrected phone number without spaces
+    
+    // Use the international format without '+' or spaces for direct deep linking
+    const myNumber = "263771716547"; 
+    
     const message = `*NEW CAR SUBMISSION*
 
 *Vehicle:* ${formData.vehicleInfo}
@@ -51,8 +54,12 @@ export default function SellForm() {
 *Phone:* ${formData.phone}
 *Photos:* ${images.length} attached`;
 
-    // Use encodeURIComponent to correctly format the message for the URL
-    window.location.href = `whatsapp://send?phone=${myNumber}&text=${encodeURIComponent(message)}`;
+    // Using the whatsapp:// protocol to bypass the browser/google redirect
+    const whatsappUrl = `whatsapp://send?phone=${myNumber}&text=${encodeURIComponent(message)}`;
+    
+    // Redirect directly to the app
+    window.location.href = whatsappUrl;
+    
     setSubmitted(true);
   };
 
@@ -63,6 +70,7 @@ export default function SellForm() {
       <div className="max-w-4xl mx-auto px-6 py-32 text-center animate-in zoom-in duration-500">
         <div className="w-24 h-24 bg-gray-100 text-black rounded-full flex items-center justify-center mx-auto mb-8 text-4xl">✓</div>
         <h2 className="text-4xl font-black text-gray-900 mb-4 italic uppercase tracking-tighter">Opening WhatsApp...</h2>
+        <p className="mb-8 text-gray-600 font-bold">Please remember to attach your photos once the chat opens!</p>
         <button onClick={() => { setSubmitted(false); setShowForm(false); }} className="px-10 py-4 border-2 border-gray-900 font-bold rounded-full hover:bg-gray-900 hover:text-white transition-all">BACK TO HOME</button>
       </div>
     );
@@ -165,7 +173,7 @@ export default function SellForm() {
         </div>
 
         <button type="submit" className="w-full py-6 bg-black text-white font-black rounded-3xl uppercase tracking-[0.2em] shadow-xl hover:bg-gray-800 transition-all active:scale-95">
-           SUBMIT TO WHATSAPP
+            SUBMIT TO WHATSAPP
         </button>
       </form>
     </div>
