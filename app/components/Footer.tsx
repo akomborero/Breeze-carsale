@@ -9,7 +9,7 @@ export default function Footer() {
           {/* Brand & Mission */}
           <div className="space-y-6">
             <Link href="/" className="text-2xl font-black text-white italic tracking-tighter">
-              breezecars<span className="text-gray-400">.com</span>
+              Breeze Car Dealership
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               Providing Zimbabwe with the best selection of quality vehicles. 
@@ -49,7 +49,7 @@ export default function Footer() {
               <li><Link href="/cars" className="hover:text-white transition-colors">Cars for Sale</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Recently Added</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Sell Your Car</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Financing Options</Link></li>
+            
             </ul>
           </div>
 

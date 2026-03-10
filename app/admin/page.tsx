@@ -12,7 +12,7 @@ interface SupabaseCar {
   make: string;
   model: string;
   year: number;
-  price_per_day: number;
+  price: number;
   images: string[];
   mileage?: string;
   transmission?: string;
@@ -64,6 +64,7 @@ export default function AdminPage() {
     carId: null
   });
   const [isAddAdminModalOpen, setIsAddAdminModalOpen] = useState(false);
+  const [isWipeConfirmationOpen, setWipeConfirmationOpen] = useState(false);
 
   const fetchCars = useCallback(async () => {
     const from = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -81,7 +82,7 @@ export default function AdminPage() {
         const formattedCars: Car[] = (data as SupabaseCar[]).map((c) => ({
             id: c.id,
             name: `${c.make} ${c.model}`,
-            price: c.price_per_day?.toString() || '0', 
+            price: c.price?.toString() || '0', 
             year: c.year?.toString() || '',
             imgs: c.images || [],
             mileage: c.mileage || '',
@@ -99,9 +100,11 @@ export default function AdminPage() {
   }, [fetchCars]);
 
   const handleWipeDatabase = async () => {
-    const confirmWipe = window.confirm("🚨 DANGER: This will delete ALL cars and reviews forever. Continue?");
-    if (!confirmWipe) return;
+    setWipeConfirmationOpen(true);
+  };
 
+  const executeWipeDatabase = async () => {
+    setWipeConfirmationOpen(false);
     setLoading(true);
     try {
       const { error } = await supabase
@@ -110,7 +113,7 @@ export default function AdminPage() {
         .neq('id', '00000000-0000-0000-0000-000000000000');
 
       if (error) throw error;
-      
+
       setCars([]);
       setTotalCount(0);
       setStatus({ isOpen: true, title: 'Success', message: 'Database cleared.', type: 'success' });
@@ -166,7 +169,7 @@ export default function AdminPage() {
       const carPayload = {
         make: name.split(' ')[0] || name,
         model: name.split(' ').slice(1).join(' ') || null,
-        price_per_day: price ? parseFloat(price.replace(/[^0-9.]/g, '')) : null,
+        price: price ? parseFloat(price.replace(/[^0-9.]/g, '')) : null,
         year: year ? parseInt(year) : null,
         images: finalUrls,
         mileage: mileage || null,
@@ -390,6 +393,14 @@ export default function AdminPage() {
         onConfirm={executeDeleteCar}
         title="Delete Vehicle"
         message="Are you sure you want to remove this vehicle from the showroom?"
+      />
+
+      <ConfirmationModal
+        isOpen={isWipeConfirmationOpen}
+        onClose={() => setWipeConfirmationOpen(false)}
+        onConfirm={executeWipeDatabase}
+        title="Wipe Database"
+        message="🚨 DANGER: This will delete ALL cars and reviews forever. Are you sure you want to continue?"
       />
 
       <AddAdminModal

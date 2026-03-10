@@ -13,10 +13,15 @@ interface Article {
 
 async function getNews() {
   const apiKey = '9df1884cd0a44fb7b29297035a4f643f';
+  
+  // Refined query: Looks for cars/vehicles/autos but avoids stock market/financial noise
+  // We use URL-encoded characters: %20 (space), %2B (+), %22 (")
+  const query = '("car news" OR "new vehicles" OR "automotive review") -stocks -finance -logistics';
+  
   try {
     const res = await fetch(
-      `https://newsapi.org/v2/everything?q=automotive&language=en&sortBy=publishedAt&pageSize=15&apiKey=${apiKey}`,
-      { next: { revalidate: 5 } }
+      `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&pageSize=15&apiKey=${apiKey}`,
+      { next: { revalidate: 3600 } } // Revalidated every hour to stay fresh but save API credits
     );
     if (!res.ok) return [];
     const data = await res.json();
