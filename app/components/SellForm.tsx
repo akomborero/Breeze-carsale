@@ -4,7 +4,6 @@ import Image from 'next/image';
 
 export default function SellForm() {
   const [showForm, setShowForm] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [images, setImages] = useState<File[]>([]);
   
   const [formData, setFormData] = useState({
@@ -36,7 +35,6 @@ export default function SellForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Use the international format without '+' or spaces for direct deep linking
     const myNumber = "263771716547"; 
     
     const message = `*NEW CAR SUBMISSION*
@@ -54,27 +52,14 @@ export default function SellForm() {
 *Phone:* ${formData.phone}
 *Photos:* ${images.length} attached`;
 
-    // Using the whatsapp:// protocol to bypass the browser/google redirect
+    // Direct deep link
     const whatsappUrl = `whatsapp://send?phone=${myNumber}&text=${encodeURIComponent(message)}`;
     
-    // Redirect directly to the app
+    // Open immediately
     window.location.href = whatsappUrl;
-    
-    setSubmitted(true);
   };
 
   const inputClass = "w-full p-4 rounded-xl border border-gray-300 bg-white text-gray-900 font-bold placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all";
-
-  if (submitted) {
-    return (
-      <div className="max-w-4xl mx-auto px-6 py-32 text-center animate-in zoom-in duration-500">
-        <div className="w-24 h-24 bg-gray-100 text-black rounded-full flex items-center justify-center mx-auto mb-8 text-4xl">✓</div>
-        <h2 className="text-4xl font-black text-gray-900 mb-4 italic uppercase tracking-tighter">Opening WhatsApp...</h2>
-        <p className="mb-8 text-gray-600 font-bold">Please remember to attach your photos once the chat opens!</p>
-        <button onClick={() => { setSubmitted(false); setShowForm(false); }} className="px-10 py-4 border-2 border-gray-900 font-bold rounded-full hover:bg-gray-900 hover:text-white transition-all">BACK TO HOME</button>
-      </div>
-    );
-  }
 
   if (!showForm) {
     return (
